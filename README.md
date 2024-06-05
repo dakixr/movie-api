@@ -1,12 +1,10 @@
 # Application structure
-` 
 movie_api/
 ├── app.py
 ├── config.py
 ├── migrations/
-│   └── ...
+│ └── ...
 ├── models.py (optional, if you separate your models)
-`
 
 # Running the Flask Application
 To run the Flask application, follow these steps:
