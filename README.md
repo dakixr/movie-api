@@ -41,3 +41,6 @@ Finally just run the following to spin up the application:
 
 
 By default the application will be served at: http://127.0.0.1:8000/
+
+
+Navigate to http://127.0.0.1:8000/load-data/ to upload the files
