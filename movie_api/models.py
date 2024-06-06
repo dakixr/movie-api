@@ -23,8 +23,8 @@ class Movie(models.Model):
 class Actor(models.Model):
     ActorID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     Name = models.CharField(max_length=255)
-    BirthYear = models.IntegerField()
-    Nationality = models.CharField(max_length=100)
+    BirthYear = models.IntegerField(null=True)
+    Nationality = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return f"{self.Name} {self.BirthYear}"
@@ -32,8 +32,8 @@ class Actor(models.Model):
 class Director(models.Model):
     DirectorID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     Name = models.CharField(max_length=255)
-    BirthYear = models.IntegerField()
-    Nationality = models.CharField(max_length=100)
+    BirthYear = models.IntegerField(null=True)
+    Nationality = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.Name
