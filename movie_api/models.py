@@ -9,12 +9,19 @@ import uuid
 # I am using camel case to fulfill the contract of the DB names
 # In a normal project i would use snake-case for table columns names
 
+class Genre(models.Model):
+    GenreID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    Name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.Name
+
 class Movie(models.Model):
     MovieID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     Title = models.CharField(max_length=255)
     ReleaseYear = models.IntegerField()
     Director = models.ForeignKey('Director', on_delete=models.CASCADE)
-    Genre = models.CharField(max_length=100)
+    Genres = models.ManyToManyField(Genre)
     Rating = models.DecimalField(max_digits=3, decimal_places=1)
 
     def __str__(self):
