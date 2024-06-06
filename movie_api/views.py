@@ -49,11 +49,13 @@ def load_data_endpoint(request):
             for _, row in data.iterrows():
 
                 # Fetch or create the movie without setting the genres yet
-                rating = pd.to_numeric(row["avg_vote"], errors="coerce") # Transform to None if value is non-numeric
+                rating = pd.to_numeric(
+                    row["avg_vote"], errors="coerce"
+                )  # Transform to None if value is non-numeric
                 rating = rating if pd.notna(rating) else None
                 movie, created = Movie.objects.get_or_create(
                     Title=row["title"],
-                    Rating=rating , 
+                    Rating=rating,
                     ReleaseYear=row["year"],
                 )
 
@@ -114,7 +116,9 @@ def export_data(request):
 
     # Create a CSV writer in memory
     writer = csv.writer(response)
-    writer.writerow(["Title", "Release Year", "Directors", "Genres", "Actors", "Rating"])
+    writer.writerow(
+        ["Title", "Release Year", "Directors", "Genres", "Actors", "Rating"]
+    )
 
     # Write each movie as a CSV row
     movies = Movie.objects.all()
@@ -122,20 +126,19 @@ def export_data(request):
         title = movie.Title
         release_year = movie.ReleaseYear
         rating = movie.Rating
-        
+
         # Get directors
         directors = ", ".join([director.Name for director in movie.Directors.all()])
-        
+
         # Get genres
         genres = ", ".join([genre.Name for genre in movie.Genres.all()])
-        
+
         # Get actors
         actors = ", ".join([ma.ActorID.Name for ma in movie.movieactor_set.all()])
 
         writer.writerow([title, release_year, directors, genres, actors, rating])
 
     return response
-
 
 
 # Util Functions
@@ -147,15 +150,19 @@ def generate_movie_release_chart(movies):
     year_counts = {year: release_years.count(year) for year in set(release_years)}
 
     # Prepare data for the bar chart
-    years = list(year_counts.keys())
-    counts = list(year_counts.values())
+    years = sorted(year_counts.keys())
+    counts = [year_counts[year] for year in years]
 
     # Generate the bar chart
-    plt.bar(years, counts)
-    plt.xlabel("Release Year")
-    plt.ylabel("Number of Movies")
-    plt.title("Number of Movies Released Each Year")
-    plt.xticks(rotation=45)
+    plt.figure(figsize=(10, 6))
+    plt.bar(years, counts, color="skyblue", edgecolor="black")
+    plt.xlabel("Release Year", fontsize=14, fontweight="bold")
+    plt.ylabel("Number of Movies", fontsize=14, fontweight="bold")
+    plt.title("Number of Movies Released Each Year", fontsize=16, fontweight="bold")
+    plt.xticks(rotation=45, fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+    plt.tight_layout()
 
     # Save the chart
     buffer = io.BytesIO()
