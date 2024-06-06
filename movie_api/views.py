@@ -21,18 +21,19 @@ from .models import Movie
 def graph_endpoint(request):
     movies = list(Movie.objects.values("Title", "ReleaseYear"))
     chart_path = generate_movie_release_chart(movies)
-    chart_file = open(chart_path, mode="rb")
+    chart_file = default_storage.open(chart_path, mode="rb")
     return FileResponse(chart_file)
 
 
+# In a production environment all of the preprocessing would be done by a background worker
+# To avoid long wait times
+@csrf_exempt
 def load_data_endpoint(request):
-
     if request.method == "GET":
-        return render(request, 'upload_form.html', {})
+        return render(request, "upload_form.html", {})
 
     # Treat user uploaded data
     if request.method == "POST":
-
         uploaded_file = request.FILES["file"]
         file_name = uploaded_file.name
         file_path = default_storage.save(uploaded_file.name, uploaded_file)
@@ -47,24 +48,31 @@ def load_data_endpoint(request):
 
             # Parsing and saving data to the database
             for _, row in data.iterrows():
-                director_name = row["director"]
-                director, created = Director.objects.get_or_create(
-                    Name=director_name,
-                    defaults={
-                        "BirthYear": None,  # Assuming BirthYear is not available in the data
-                        "Nationality": None  # Assuming Nationality is not available in the data
-                    }
-                )
-
 
                 # Fetch or create the movie without setting the genres yet
                 movie, created = Movie.objects.get_or_create(
                     Title=row["title"],
                     ReleaseYear=row["year"],
-                    Director=director,
                     Rating=row["avg_vote"],
                 )
-                
+
+                # Parsing and adding the directors
+                if isinstance(row["director"], str):
+                    directors_names = [
+                        director.strip() for director in row["director"].split(",")
+                    ]
+
+                    for director_name in directors_names:
+                        director, created = Director.objects.get_or_create(
+                            Name=director_name,
+                            defaults={
+                                "BirthYear": None,  # Assuming BirthYear is not available in the data
+                                "Nationality": None,  # Assuming Nationality is not available in the data
+                            },
+                        )
+                        movie.Directors.add(director)
+
+                # Adding the genres
                 if isinstance(row["genre"], str):
                     # Split the genres by comma and strip any extra whitespace
                     genres_list = [genre.strip() for genre in row["genre"].split(",")]
@@ -85,8 +93,8 @@ def load_data_endpoint(request):
                             Name=actor_name,
                             defaults={
                                 "BirthYear": None,  # Assuming BirthYear is not available in the data
-                                "Nationality": None  # Assuming Nationality is not available in the data
-                            }
+                                "Nationality": None,  # Assuming Nationality is not available in the data
+                            },
                         )
                         MovieActor.objects.get_or_create(MovieID=movie, ActorID=actor)
 

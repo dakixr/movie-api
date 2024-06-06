@@ -8,10 +8,14 @@
 <body>
     <h1>Upload File</h1>
     <form action="{% url 'load_data' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
         <label for="file">Choose file to upload (CSV or Excel):</label>
         <input type="file" id="file" name="file" accept=".csv, .xlsx" required>
         <button type="submit">Upload</button>
     </form>
+    <br>
+    <br>
+    <br>
+    <a href="{% url 'draw_chart' %}"> Draw Chart</a>
+    <a href="{% url 'export_data' %}"> Export Data</a>
 </body>
 </html>
