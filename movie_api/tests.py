@@ -22,3 +22,21 @@ class MovieAPITests(TestCase):
         self.movie.Directors.add(self.director)
         self.movie.Genres.add(self.genre)
         MovieActor.objects.create(MovieID=self.movie, ActorID=self.actor)
+
+    def test_export_data(self):
+        response = self.client.get(reverse("export_data"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response["Content-Disposition"], "attachment; filename=movies.csv"
+        )
+
+        content = response.content.decode("utf-8")
+        reader = csv.reader(io.StringIO(content))
+        header = next(reader)
+        self.assertEqual(
+            header, ["Title", "Release Year", "Directors", "Genres", "Actors", "Rating"]
+        )
+        row = next(reader)
+        self.assertEqual(
+            row, ["Test Movie", "2020", "Test Director", "Action", "Test Actor", "8.5"]
+        )
