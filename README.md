@@ -47,4 +47,4 @@ Navigate to http://127.0.0.1:8000/load-data/ to upload the files
 
 # Running the unittest
 
-`python manage.py test`
+`py manage.py test`
