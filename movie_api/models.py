@@ -22,7 +22,7 @@ class Movie(models.Model):
     ReleaseYear = models.IntegerField()
     Directors = models.ManyToManyField('Director')
     Genres = models.ManyToManyField(Genre)
-    Rating = models.DecimalField(max_digits=3, decimal_places=1)
+    Rating = models.DecimalField(max_digits=3, decimal_places=1, null=True)
 
     def __str__(self):
         return self.Title
