@@ -163,5 +163,5 @@ def generate_movie_release_chart(movies):
     plt.close()
     buffer.seek(0)
 
-    chart_path = default_storage.save(f"charts/chart", buffer)
+    chart_path = default_storage.save(f"charts/chart.png", buffer)
     return chart_path
