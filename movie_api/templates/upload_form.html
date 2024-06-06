@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+</head>
+<body>
+    <h1>Upload File</h1>
+    <form action="{% url 'load_data' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="file">Choose file to upload (CSV or Excel):</label>
+        <input type="file" id="file" name="file" accept=".csv, .xlsx" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
