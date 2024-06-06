@@ -5,6 +5,7 @@ Here are the specific steps you need to follow:
 • Create a database. Implement migration scripts.
 
 • Create database tables by provided description:Movies table:
+
 • MovieID (unique identifier)
 • Title (title of the movie)
 • ReleaseYear (year of release)
