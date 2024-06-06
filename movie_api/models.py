@@ -20,7 +20,7 @@ class Movie(models.Model):
     MovieID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     Title = models.CharField(max_length=255)
     ReleaseYear = models.IntegerField()
-    Director = models.ForeignKey('Director', on_delete=models.CASCADE)
+    Directors = models.ManyToManyField('Director')
     Genres = models.ManyToManyField(Genre)
     Rating = models.DecimalField(max_digits=3, decimal_places=1)
 
