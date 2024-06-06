@@ -114,14 +114,28 @@ def export_data(request):
 
     # Create a CSV writer in memory
     writer = csv.writer(response)
-    writer.writerow(["Title", "Release Year"])
+    writer.writerow(["Title", "Release Year", "Directors", "Genres", "Actors", "Rating"])
 
     # Write each movie as a CSV row
-    movies = list(Movie.objects.values("Title", "ReleaseYear"))
+    movies = Movie.objects.all()
     for movie in movies:
-        writer.writerow([movie["Title"], movie["ReleaseYear"]])
+        title = movie.Title
+        release_year = movie.ReleaseYear
+        rating = movie.Rating
+        
+        # Get directors
+        directors = ", ".join([director.Name for director in movie.Directors.all()])
+        
+        # Get genres
+        genres = ", ".join([genre.Name for genre in movie.Genres.all()])
+        
+        # Get actors
+        actors = ", ".join([ma.ActorID.Name for ma in movie.movieactor_set.all()])
+
+        writer.writerow([title, release_year, directors, genres, actors, rating])
 
     return response
+
 
 
 # Util Functions
