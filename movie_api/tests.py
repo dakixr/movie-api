@@ -63,3 +63,13 @@ class MovieAPITests(TestCase):
         self.assertEqual(movie.Genres.first().Name, "Drama")
         self.assertEqual(movie.movieactor_set.first().ActorID.Name, "Actor 1")
 
+    def test_graph_endpoint(self):
+        response = self.client.get(reverse("draw_chart"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/png")
+
+    def test_generate_movie_release_chart(self):
+        movies = list(Movie.objects.values("Title", "ReleaseYear"))
+        chart_path = generate_movie_release_chart(movies)
+        chart_file = default_storage.open(chart_path, mode="rb")
+        self.assertIsNotNone(chart_file)
